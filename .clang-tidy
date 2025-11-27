@@ -1,0 +1,65 @@
+---
+Checks: "*,
+        -misc-include-cleaner,
+        -misc-use-anonymous-namespace,
+        -modernize-use-trailing-return-type,
+        -readability-avoid-const-params-in-decls,
+        -cppcoreguidelines-non-private-member-variables-in-classes,
+        -misc-non-private-member-variables-in-classes,
+        -abseil-*,
+        -altera-*,
+        -android-*,
+        -boost-*,
+        -darwin-*,
+        -fuchsia-*,
+        -google-*,
+        -linuxkernel-*,
+        -llvm-*,
+        -llvmlibc-*,
+        -mpi-*,
+        -objc-*,
+        -openmp-*,
+        -zircon-*"
+
+# .clang-tidy and .clang-format should always be in the same directory
+FormatStyle: .clang-format
+
+# Check headers
+HeaderFilterRegex: '.*'
+
+# Custom version of https://google.github.io/styleguide/cppguide.html#Naming
+CheckOptions:
+    # Type Names
+    - { key: readability-identifier-naming.ClassCase,                   value: CamelCase  }
+    - { key: readability-identifier-naming.StructCase,                  value: CamelCase  }
+    - { key: readability-identifier-naming.EnumCase,                    value: CamelCase  }
+    - { key: readability-identifier-naming.UnionCase,                   value: CamelCase  }
+    - { key: readability-identifier-naming.TypedefCase,                 value: CamelCase  }
+    - { key: readability-identifier-naming.TypeAliasCase,               value: CamelCase  }
+    - { key: readability-identifier-naming.TypeTemplateParameterCase,   value: CamelCase  }
+    # Concept Names
+    - { key: readability-identifier-naming.ConceptCase,                 value: CamelCase  }
+    # Variable Names
+    - { key: readability-identifier-naming.VariableCase,                value: lower_case }
+    - { key: readability-identifier-naming.ParameterCase,               value: lower_case }
+    - { key: readability-identifier-naming.GlobalVariableCase,          value: lower_case }
+    - { key: readability-identifier-naming.GlobalVariablePrefix,        value: g_ }
+    - { key: readability-identifier-naming.PublicMemberSuffix,          value: '' }
+    - { key: readability-identifier-naming.PrivateMemberSuffix,         value: _ }
+    - { key: readability-identifier-naming.ProtectedMemberSuffix,       value: _ }
+    # Constant Names
+    - { key: readability-identifier-naming.ConstantCase,                value: CamelCase }
+    - { key: readability-identifier-naming.ConstantPrefix,              value: k }
+    - { key: readability-identifier-naming.ConstexprVariableCase,       value: CamelCase }
+    - { key: readability-identifier-naming.ConstexprVariablePrefix,     value: k }
+    - { key: readability-identifier-naming.ConstantParameterCase,       value: lower_case }
+    - { key: readability-identifier-naming.ConstantParameterPrefix,     value: '' }
+    # Function Names: camelBack instead of CamelCase
+    - { key: readability-identifier-naming.FunctionCase,                value: camelBack }
+    # Namespace Names
+    - { key: readability-identifier-naming.NamespaceCase,               value: lower_case }
+    # Enumerator Names
+    - { key: readability-identifier-naming.EnumConstantCase,            value: CamelCase }
+    - { key: readability-identifier-naming.EnumConstantPrefix,          value: k }
+    # Macro Names
+    - { key: readability-identifier-naming.MacroDefinitionCase,         value: UPPER_CASE }
