@@ -1,5 +1,7 @@
 ---
 Checks: "*,
+        -hicpp-vararg,
+        -cppcoreguidelines-pro-type-vararg,
         -misc-include-cleaner,
         -misc-use-anonymous-namespace,
         -modernize-use-trailing-return-type,
