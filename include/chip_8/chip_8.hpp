@@ -135,11 +135,11 @@ class Chip8 {
 
    public:
     void cycle() {
-        auto bytecode = fetch();
+        const auto kBytecode = fetch();
 
-        auto instruction = decode(bytecode);
+        const auto kInstruction = decode(kBytecode);
 
-        instruction(state_, bytecode);
+        kInstruction(state_, kBytecode);
     }
 };
 
