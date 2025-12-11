@@ -1,7 +1,6 @@
 #include "chip_8/instruction_set.hpp"
 
-#include <stdexcept>
-
+#include "chip_8/error.hpp"
 #include "chip_8/utility.hpp"
 
 namespace emu::instruction_set {
@@ -14,7 +13,7 @@ void op00E0(ChipState& state, const std::uint16_t bytecode) {
 
 void op00EE(ChipState& state, const std::uint16_t /* not used */) {
     if (state.stack.empty()) {
-        throw std::runtime_error("Stack underflow on RET");
+        throw StackUnderflowError("Stack underflow on RET");
     }
 
     state.program_counter = state.stack.top();

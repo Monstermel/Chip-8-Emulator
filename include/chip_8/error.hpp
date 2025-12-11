@@ -13,6 +13,13 @@ class InvalidInstructionError : public std::runtime_error {
         : std::runtime_error(message) {}
 };
 
+class StackUnderflowError : public std::runtime_error {
+   public:
+    explicit StackUnderflowError() : std::runtime_error("Stack underflow") {};
+    explicit StackUnderflowError(const std::string& message)
+        : std::runtime_error(message) {}
+};
+
 }  // namespace emu
 
 #endif /* CHIP_8_ERROR_HANDLING_HPP */
