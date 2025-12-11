@@ -2,7 +2,6 @@
 #define CHIP_8_INTRUCTIONS_HPP
 
 #include <cstdint>
-#include <stdexcept>
 
 #include "chip_8/chip_state.hpp"
 
