@@ -3,6 +3,7 @@
 #include <fstream>
 #include <ios>
 #include <iterator>
+#include "chip_8/chip_state.hpp"
 
 namespace emu {
 
@@ -22,7 +23,7 @@ int Chip8::load() {
 
     // Load test ROM into memory at kProgramSpaceOffset
     if (!file.read(std::next(reinterpret_cast<char*>(state_.memory.data()),
-                             kProgramSpaceOffset),
+                             memory::kProgramSpaceOffset),
                    size)) {
         return -1;
     }

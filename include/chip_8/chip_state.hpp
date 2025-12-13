@@ -8,21 +8,23 @@
 
 namespace emu {
 
-// Font metadata
-constexpr std::uint16_t kFontSpriteSize = 5;
-constexpr std::uint16_t kFontMemoryOffset = 0x000;
+namespace font {  // Font metadata
+constexpr std::uint16_t kSpriteSize = 5;
+constexpr std::uint16_t kMemoryOffset = 0x000;
+}  // namespace font
 
-// Memory layout
+namespace memory {  // Memory layout
 constexpr std::uint16_t kInterpreterSpaceOffset = 0x000;
 constexpr std::uint16_t kProgramSpaceOffset = 0x200;
-constexpr std::size_t kMemorySize = 4096;
+constexpr std::size_t kSize = 4096;
+}  // namespace memory
 
 // Registers metadata
 constexpr std::size_t kNumberRegisters = 16;
 
 struct ChipState {
     // Memory
-    std::array<std::uint8_t, kMemorySize> memory{
+    std::array<std::uint8_t, memory::kSize> memory{
         0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
         0x20, 0x60, 0x20, 0x20, 0x70,  // 1
         0xF0, 0x10, 0xF0, 0x80, 0xF0,  // 2
@@ -45,7 +47,7 @@ struct ChipState {
     // Random engine
     std::minstd_rand rnd;
     // Program counter
-    std::uint16_t program_counter{kProgramSpaceOffset};
+    std::uint16_t program_counter{memory::kProgramSpaceOffset};
     // Index register
     std::uint16_t index_register{};
     // Delay Timer

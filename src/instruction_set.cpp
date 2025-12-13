@@ -156,7 +156,7 @@ void opFx29(ChipState& state, const std::uint16_t bytecode) {
     const auto kDigit =
         static_cast<std::uint16_t>(state.V[getNibbleX(bytecode)]);
 
-    state.index_register = kFontMemoryOffset + (kDigit * kFontSpriteSize);
+    state.index_register = font::kMemoryOffset + (kDigit * font::kSpriteSize);
 }
 
 void opFx33(ChipState& state, const std::uint16_t bytecode) {

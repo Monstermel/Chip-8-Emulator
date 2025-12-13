@@ -7,28 +7,7 @@
 #include "SDL3/SDL_main.h"
 
 /* This function runs once at startup. */
-SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
-    // // Open test ROM
-    // std::ifstream file("test/test-opcode.ch8",
-    //                    std::ifstream::ate | std::ifstream::binary);
-    // if (!file.is_open()) {
-    //     SDL_Log("Failed to open file");
-    //     return SDL_APP_FAILURE;
-    // }
-
-    // // Get size of file
-    // std::streamsize size = file.tellg();
-    // // Set file at beggining
-    // file.seekg(std::ifstream::beg);
-
-    // // Load test ROM into memory at 0x00
-    // if (!file.read(reinterpret_cast<char*>(memory.data()), size)) {
-    //     SDL_Log("Failed to read file");
-    //     return SDL_APP_FAILURE;
-    // }
-
-    // return SDL_APP_CONTINUE;
-}
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {}
 
 /* This function runs when a new event (mouse input, keypresses, etc) occurs. */
 SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
