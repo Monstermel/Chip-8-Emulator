@@ -13,8 +13,6 @@ namespace emu {
 class Chip8 {
     ChipState state_;
 
-    int load();
-
     std::uint16_t fetch() noexcept {
         const auto kInstruction =
             (static_cast<unsigned int>(state_.memory[state_.program_counter])
@@ -144,6 +142,8 @@ class Chip8 {
     }
 
    public:
+    int load();
+
     void cycle() {
         const auto kBytecode = fetch();
 
