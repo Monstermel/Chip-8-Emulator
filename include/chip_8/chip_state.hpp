@@ -8,12 +8,21 @@
 
 namespace emu {
 
+// Font metadata
 constexpr std::uint16_t kFontSpriteSize = 5;
-constexpr std::uint16_t kFontMemoryOffset = 0;
+constexpr std::uint16_t kFontMemoryOffset = 0x000;
+
+// Memory layout
+constexpr std::uint16_t kInterpreterSpaceOffset = 0x000;
+constexpr std::uint16_t kProgramSpaceOffset = 0x200;
+constexpr std::size_t kMemorySize = 4096;
+
+// Registers metadata
+constexpr std::size_t kNumberRegisters = 16;
 
 struct ChipState {
     // Memory
-    std::array<std::uint8_t, 4096> memory{
+    std::array<std::uint8_t, kMemorySize> memory{
         0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
         0x20, 0x60, 0x20, 0x20, 0x70,  // 1
         0xF0, 0x10, 0xF0, 0x80, 0xF0,  // 2
@@ -32,7 +41,7 @@ struct ChipState {
         0xF0, 0x80, 0xF0, 0x80, 0x80   // F
     };
     // Registers
-    std::array<std::uint8_t, 16> V{};
+    std::array<std::uint8_t, kNumberRegisters> V{};
     // Random engine
     std::minstd_rand rnd;
     // Program counter
