@@ -19,8 +19,9 @@ constexpr std::uint16_t kProgramSpaceOffset = 0x200;
 constexpr std::size_t kSize = 4096;
 }  // namespace memory
 
-// Registers metadata
-constexpr std::size_t kNumberRegisters = 16;
+namespace registers {  // Registers metadata
+constexpr std::size_t kNum = 16;
+}
 
 struct ChipState {
     // Memory
@@ -43,7 +44,7 @@ struct ChipState {
         0xF0, 0x80, 0xF0, 0x80, 0x80   // F
     };
     // Registers
-    std::array<std::uint8_t, kNumberRegisters> V{};
+    std::array<std::uint8_t, registers::kNum> V{};
     // Random engine
     std::minstd_rand rnd;
     // Program counter
