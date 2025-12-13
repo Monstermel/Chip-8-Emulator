@@ -6,24 +6,28 @@
 #include "chip_8/chip_state.hpp"
 #include "chip_8/error.hpp"
 #include "chip_8/instruction_set.hpp"
+#include "chip_8/utility.hpp"
 
 namespace emu {
 
 class Chip8 {
     ChipState state_;
 
-    std::uint16_t fetch() {
-        const auto kInstruction = static_cast<std::uint16_t>(
-            state_.memory[state_.program_counter] << 8U |
-            state_.memory[state_.program_counter + 1]);
+    std::uint16_t fetch() noexcept {
+        const auto kInstruction =
+            (static_cast<unsigned int>(state_.memory[state_.program_counter])
+             << kByteWidth) |
+            static_cast<unsigned int>(
+                state_.memory[state_.program_counter + 1]);
 
         state_.program_counter += 2;
 
         return kInstruction;
     }
 
-    instruction_set::Instruction handleGroup0(const std::uint16_t instruction) {
-        switch (instruction & 0x0FFF) {
+    static instruction_set::Instruction handleGroup0(
+        const std::uint16_t instruction) {
+        switch (instruction & 0x0FFFU) {
             case 0x00E0:
                 return instruction_set::op00E0;
             case 0x00EE:
@@ -33,8 +37,9 @@ class Chip8 {
         }
     }
 
-    instruction_set::Instruction handleGroup8(const std::uint16_t instruction) {
-        switch (instruction & 0x000F) {
+    static instruction_set::Instruction handleGroup8(
+        const std::uint16_t instruction) {
+        switch (instruction & 0x000FU) {
             case 0x0000:
                 return instruction_set::op8xy0;
             case 0x0001:
@@ -58,8 +63,9 @@ class Chip8 {
         }
     }
 
-    instruction_set::Instruction handleGroupE(const std::uint16_t instruction) {
-        switch (instruction & 0x00FF) {
+    static instruction_set::Instruction handleGroupE(
+        const std::uint16_t instruction) {
+        switch (instruction & 0x00FFU) {
             case 0x009E:
                 return instruction_set::opEx9E;
             case 0x00A1:
@@ -69,8 +75,9 @@ class Chip8 {
         }
     }
 
-    instruction_set::Instruction handleGroupF(const std::uint16_t instruction) {
-        switch (instruction & 0x00FF) {
+    static instruction_set::Instruction handleGroupF(
+        const std::uint16_t instruction) {
+        switch (instruction & 0x00FFU) {
             case 0x0007:
                 return instruction_set::opFx07;
             case 0x000A:
@@ -94,8 +101,9 @@ class Chip8 {
         }
     }
 
-    instruction_set::Instruction decode(const std::uint16_t instruction) {
-        switch (instruction & 0xF000) {
+    static instruction_set::Instruction decode(
+        const std::uint16_t instruction) {
+        switch (instruction & 0xF000U) {
             case 0x0000:
                 return handleGroup0(instruction);
             case 0x1000:

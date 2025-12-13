@@ -15,6 +15,7 @@ using Instruction = void (*)(ChipState& chip, const std::uint16_t);
  * @param bytecode
  */
 void op0nnn(ChipState& /* not used */, const std::uint16_t /* not used */);
+
 /**
  * @brief CLS - Clear the display.
  *

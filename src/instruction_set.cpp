@@ -1,5 +1,7 @@
 #include "chip_8/instruction_set.hpp"
 
+#include <cstdint>
+
 #include "chip_8/error.hpp"
 #include "chip_8/utility.hpp"
 
@@ -71,13 +73,40 @@ void op8xy3(ChipState& state, const std::uint16_t bytecode) {
     state.V[getNibbleX(bytecode)] ^= state.V[getNibbleY(bytecode)];
 }
 
-void op8xy4(ChipState& state, const std::uint16_t bytecode) {}
+void op8xy4(ChipState& state, const std::uint16_t bytecode) {
+    const auto kNibbleX = getNibbleX(bytecode);
 
-void op8xy5(ChipState& state, const std::uint16_t bytecode) {}
+    const auto kResult =
+        static_cast<unsigned int>(state.V[kNibbleX]) +
+        static_cast<unsigned int>(state.V[getNibbleY(bytecode)]);
+
+    state.V[0xF] = static_cast<std::uint8_t>((kResult & 0x100U) >> kByteWidth);
+    state.V[kNibbleX] = static_cast<std::uint8_t>(kResult);
+}
+
+void op8xy5(ChipState& state, const std::uint16_t bytecode) {
+    const auto kNibbleX = getNibbleX(bytecode);
+    const auto kNibbleY = getNibbleY(bytecode);
+
+    // TODO: Remove branch
+    state.V[0xF] = (state.V[kNibbleX] > state.V[kNibbleY]) ? 1 : 0;
+
+    state.V[kNibbleX] =
+        static_cast<std::uint8_t>(state.V[kNibbleX] - state.V[kNibbleY]);
+}
 
 void op8xy6(ChipState& state, const std::uint16_t bytecode) {}
 
-void op8xy7(ChipState& state, const std::uint16_t bytecode) {}
+void op8xy7(ChipState& state, const std::uint16_t bytecode) {
+    const auto kNibbleX = getNibbleX(bytecode);
+    const auto kNibbleY = getNibbleY(bytecode);
+
+    // TODO: Remove branch
+    state.V[0xF] = (state.V[kNibbleY] > state.V[kNibbleX]) ? 1 : 0;
+
+    state.V[kNibbleX] =
+        static_cast<std::uint8_t>(state.V[kNibbleY] - state.V[kNibbleX]);
+}
 
 void op8xyE(ChipState& state, const std::uint16_t bytecode) {}
 
@@ -95,7 +124,9 @@ void opBnnn(ChipState& state, const std::uint16_t bytecode) {
     state.program_counter = getAddress(bytecode) + state.V[0];
 }
 
-void opCxkk(ChipState& state, const std::uint16_t bytecode) {}
+void opCxkk(ChipState& state, const std::uint16_t bytecode) {
+    state.V[getNibbleX(bytecode)] = state.rnd() & getAddress(bytecode);
+}
 
 void opDxyn(ChipState& state, const std::uint16_t bytecode) {}
 
@@ -121,12 +152,43 @@ void opFx1E(ChipState& state, const std::uint16_t bytecode) {
     state.index_register += state.V[getNibbleX(bytecode)];
 }
 
-void opFx29(ChipState& state, const std::uint16_t bytecode) {}
+void opFx29(ChipState& state, const std::uint16_t bytecode) {
+    const auto kDigit =
+        static_cast<std::uint16_t>(state.V[getNibbleX(bytecode)]);
 
-void opFx33(ChipState& state, const std::uint16_t bytecode) {}
+    state.index_register = kFontMemoryOffset + (kDigit * kFontSpriteSize);
+}
 
-void opFx55(ChipState& state, const std::uint16_t bytecode) {}
+void opFx33(ChipState& state, const std::uint16_t bytecode) {
+    auto value = static_cast<unsigned int>(state.V[getNibbleX(bytecode)]);
 
-void opFx65(ChipState& state, const std::uint16_t bytecode) {}
+    state.memory[state.index_register + 2] =
+        static_cast<std::uint8_t>(value % 10U);
+    value /= 10;
+
+    state.memory[state.index_register + 1] =
+        static_cast<std::uint8_t>(value % 10U);
+    value /= 10;
+
+    state.memory[state.index_register] = static_cast<std::uint8_t>(value % 10U);
+}
+
+void opFx55(ChipState& state, const std::uint16_t bytecode) {
+    const auto kNibbleX = getNibbleX(bytecode);
+
+    for (int idx = state.index_register, rgs = 0; rgs <= kNibbleX;
+         idx++, rgs++) {
+        state.memory[idx] = state.V[rgs];
+    }
+}
+
+void opFx65(ChipState& state, const std::uint16_t bytecode) {
+    const auto kNibbleX = getNibbleX(bytecode);
+
+    for (int idx = state.index_register, rgs = 0; rgs <= kNibbleX;
+         idx++, rgs++) {
+        state.V[rgs] = state.memory[idx];
+    }
+}
 
 }  // namespace emu::instruction_set

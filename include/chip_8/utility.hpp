@@ -5,20 +5,30 @@
 
 namespace emu {
 
+constexpr unsigned int kByteWidth = 8U;
+
+constexpr unsigned int kNibbleXMask = 0x0F00U;
+
+constexpr unsigned int kNibbleYMask = 0x00F0U;
+
+constexpr unsigned int kLowByteMask = 0x00FFU;
+
+constexpr unsigned int kAddressMask = 0x0FFFU;
+
 inline std::uint8_t getNibbleX(const std::uint16_t bytecode) {
-    return (bytecode & 0x0F00) >> 8;
+    return (bytecode & kNibbleXMask) >> kByteWidth;
 }
 
 inline std::uint8_t getNibbleY(const std::uint16_t bytecode) {
-    return (bytecode & 0x00F0) >> 4;
+    return (bytecode & kNibbleYMask) >> (kByteWidth >> 1U);
 }
 
 inline std::uint8_t getLowByte(const std::uint16_t bytecode) {
-    return bytecode & 0x00FF;
+    return bytecode & kLowByteMask;
 }
 
 inline std::uint16_t getAddress(const std::uint16_t bytecode) {
-    return bytecode & 0x0FFF;
+    return bytecode & kAddressMask;
 }
 
 };  // namespace emu
