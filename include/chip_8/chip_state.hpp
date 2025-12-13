@@ -45,7 +45,7 @@ struct ChipState {
     // Random engine
     std::minstd_rand rnd;
     // Program counter
-    std::uint16_t program_counter{};
+    std::uint16_t program_counter{kProgramSpaceOffset};
     // Index register
     std::uint16_t index_register{};
     // Delay Timer
