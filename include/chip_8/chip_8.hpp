@@ -150,6 +150,14 @@ class Chip8 {
         const auto kInstruction = decode(kBytecode);
 
         kInstruction(state_, kBytecode);
+
+        if (state_.delay_timer > 0) {
+            state_.delay_timer -= 1;
+        }
+
+        if (state_.sound_timer > 0) {
+            state_.sound_timer -= 1;
+        }
     }
 };
 
