@@ -13,6 +13,11 @@ namespace emu {
 class Chip8 {
     ChipState state_;
 
+    /**
+     * @brief Fetch an instruction from memory and update program counter
+     *
+     * @return instruction in bytecode format
+     */
     std::uint16_t fetch() noexcept {
         const auto kInstruction =
             (static_cast<unsigned int>(state_.memory[state_.program_counter])
@@ -25,9 +30,15 @@ class Chip8 {
         return kInstruction;
     }
 
+    /**
+     * @brief Map bytecode to its instruction under 0xxx group
+     *
+     * @param bytecode
+     * @return instruction_set::Instruction
+     */
     static instruction_set::Instruction handleGroup0(
-        const std::uint16_t instruction) {
-        switch (instruction & 0x0FFFU) {
+        const std::uint16_t bytecode) {
+        switch (bytecode & 0x0FFFU) {
             case 0x00E0:
                 return instruction_set::op00E0;
             case 0x00EE:
@@ -37,9 +48,15 @@ class Chip8 {
         }
     }
 
+    /**
+     * @brief Map bytecode to its instruction under 8xxx group
+     *
+     * @param bytecode
+     * @return instruction_set::Instruction
+     */
     static instruction_set::Instruction handleGroup8(
-        const std::uint16_t instruction) {
-        switch (instruction & 0x000FU) {
+        const std::uint16_t bytecode) {
+        switch (bytecode & 0x000FU) {
             case 0x0000:
                 return instruction_set::op8xy0;
             case 0x0001:
@@ -63,9 +80,15 @@ class Chip8 {
         }
     }
 
+    /**
+     * @brief Map bytecode to its instruction under Exxx group
+     *
+     * @param bytecode
+     * @return instruction_set::Instruction
+     */
     static instruction_set::Instruction handleGroupE(
-        const std::uint16_t instruction) {
-        switch (instruction & 0x00FFU) {
+        const std::uint16_t bytecode) {
+        switch (bytecode & 0x00FFU) {
             case 0x009E:
                 return instruction_set::opEx9E;
             case 0x00A1:
@@ -75,9 +98,15 @@ class Chip8 {
         }
     }
 
+    /**
+     * @brief Map bytecode to its instruction under Fxxx group
+     *
+     * @param bytecode
+     * @return instruction_set::Instruction
+     */
     static instruction_set::Instruction handleGroupF(
-        const std::uint16_t instruction) {
-        switch (instruction & 0x00FFU) {
+        const std::uint16_t bytecode) {
+        switch (bytecode & 0x00FFU) {
             case 0x0007:
                 return instruction_set::opFx07;
             case 0x000A:
@@ -101,11 +130,16 @@ class Chip8 {
         }
     }
 
-    static instruction_set::Instruction decode(
-        const std::uint16_t instruction) {
-        switch (instruction & 0xF000U) {
+    /**
+     * @brief Map a bytecode to its corresponding instruction
+     *
+     * @param instruction
+     * @return instruction_set::Instruction
+     */
+    static instruction_set::Instruction decode(const std::uint16_t bytecode) {
+        switch (bytecode & 0xF000U) {
             case 0x0000:
-                return handleGroup0(instruction);
+                return handleGroup0(bytecode);
             case 0x1000:
                 return instruction_set::op1nnn;
             case 0x2000:
@@ -121,7 +155,7 @@ class Chip8 {
             case 0x7000:
                 return instruction_set::op7xkk;
             case 0x8000:
-                return handleGroup8(instruction);
+                return handleGroup8(bytecode);
             case 0x9000:
                 return instruction_set::op9xy0;
             case 0xA000:
@@ -133,17 +167,26 @@ class Chip8 {
             case 0xD000:
                 return instruction_set::opDxyn;
             case 0xE000:
-                return handleGroupE(instruction);
+                return handleGroupE(bytecode);
             case 0xF000:
-                return handleGroupF(instruction);
+                return handleGroupF(bytecode);
             default:
                 throw InvalidInstructionError();
         }
     }
 
    public:
+    /**
+     * @brief Load test ROM into memory
+     *
+     * @return 0 at success, -1 at failure
+     */
     int load();
 
+    /**
+     * @brief Represet a single interpreter cycle
+     *
+     */
     void cycle() {
         const auto kBytecode = fetch();
 

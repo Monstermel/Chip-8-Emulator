@@ -15,18 +15,42 @@ constexpr unsigned int kLowByteMask = 0x00FFU;
 
 constexpr unsigned int kAddressMask = 0x0FFFU;
 
+/**
+ * @brief Get the X nibble from bytecode
+ *
+ * @param bytecode
+ * @return std::uint8_t
+ */
 inline std::uint8_t getNibbleX(const std::uint16_t bytecode) {
     return (bytecode & kNibbleXMask) >> kByteWidth;
 }
 
+/**
+ * @brief Get the Y nibble from bytecode
+ *
+ * @param bytecode
+ * @return std::uint8_t
+ */
 inline std::uint8_t getNibbleY(const std::uint16_t bytecode) {
     return (bytecode & kNibbleYMask) >> (kByteWidth >> 1U);
 }
 
+/**
+ * @brief Get the low byte from bytecode
+ *
+ * @param bytecode
+ * @return std::uint8_t
+ */
 inline std::uint8_t getLowByte(const std::uint16_t bytecode) {
     return bytecode & kLowByteMask;
 }
 
+/**
+ * @brief Get the address from bytecode (three low nibbles)
+ *
+ * @param bytecode
+ * @return std::uint8_t
+ */
 inline std::uint16_t getAddress(const std::uint16_t bytecode) {
     return bytecode & kAddressMask;
 }
