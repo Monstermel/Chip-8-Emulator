@@ -203,6 +203,7 @@ class Chip8 {
         }
 
         if (state_.sound_timer > 0) {
+            // Make a beep
             state_.sound_timer -= 1;
         }
     }

@@ -5,7 +5,7 @@
 #include <cstring>
 
 #include "chip_8/error.hpp"
-#include "chip_8/key_map.hpp"
+#include "chip_8/keys.hpp"
 #include "chip_8/utility.hpp"
 
 namespace emu::instruction_set {
@@ -179,7 +179,7 @@ void opDxyn(ChipState& state, const std::uint16_t bytecode) {
 void opEx9E(ChipState& state, const std::uint16_t bytecode) {
     const auto kNibbleX = getNibbleX(bytecode);
 
-    if (state.keyboard[keyMap(kNibbleX)]) {
+    if (state.keyboard[keys::mapping(kNibbleX)]) {
         state.program_counter += 2U;
     }
 }
@@ -187,7 +187,7 @@ void opEx9E(ChipState& state, const std::uint16_t bytecode) {
 void opExA1(ChipState& state, const std::uint16_t bytecode) {
     const auto kNibbleX = getNibbleX(bytecode);
 
-    if (!state.keyboard[keyMap(kNibbleX)]) {
+    if (!state.keyboard[keys::mapping(kNibbleX)]) {
         state.program_counter += 2U;
     }
 }
@@ -197,7 +197,21 @@ void opFx07(ChipState& state, const std::uint16_t bytecode) {
 }
 
 void opFx0A(ChipState& state, const std::uint16_t bytecode) {
-    // TODO
+    int key_pressed = -1;
+    for (auto i = 0; i < keys::kNum; i++) {
+        if (state.keyboard[keys::mapping(i)]) {
+            key_pressed = i;
+            break;
+        }
+    }
+
+    if (key_pressed == -1) {
+        // Run this instruction again in the next cycle
+        state.program_counter -= 2U;
+    } else {
+        const auto kNibbleX = getNibbleX(bytecode);
+        state.V[kNibbleX] = static_cast<std::uint8_t>(key_pressed);
+    }
 }
 
 void opFx15(ChipState& state, const std::uint16_t bytecode) {

@@ -6,9 +6,11 @@
 
 #include "SDL3/SDL_scancode.h"
 
-namespace emu {
+namespace emu::keys {
 
-inline std::size_t keyMap(const std::uint8_t key) {
+constexpr unsigned int kNum = 16;
+
+inline std::size_t mapping(const std::uint8_t key) {
     switch (key) {
         // First row
         case 0x1U:
@@ -52,6 +54,6 @@ inline std::size_t keyMap(const std::uint8_t key) {
     }
 }
 
-};  // namespace emu
+};  // namespace emu::keys
 
 #endif /* CHIP_8_KEY_MAP_HPP */
