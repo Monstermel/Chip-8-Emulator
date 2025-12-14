@@ -66,6 +66,9 @@ struct ChipState {
     // Sound Timer
     std::uint8_t sound_timer{};
 
+    // Keyboard state
+    const bool* keyboard{};
+
     // Stack TODO: Implement a static stack
     std::stack<std::uint16_t> stack;
 };

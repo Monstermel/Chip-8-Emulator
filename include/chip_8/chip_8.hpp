@@ -8,6 +8,8 @@
 #include "chip_8/instruction_set.hpp"
 #include "chip_8/utility.hpp"
 
+#include "SDL3/SDL_keyboard.h"
+
 namespace emu {
 
 class Chip8 {
@@ -188,6 +190,8 @@ class Chip8 {
      *
      */
     void cycle() {
+        state_.keyboard = SDL_GetKeyboardState(NULL);
+
         const auto kBytecode = fetch();
 
         const auto kInstruction = decode(kBytecode);

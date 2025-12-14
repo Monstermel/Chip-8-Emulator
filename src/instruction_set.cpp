@@ -8,8 +8,6 @@
 #include "chip_8/key_map.hpp"
 #include "chip_8/utility.hpp"
 
-#include "SDL3/SDL_keyboard.h"
-
 namespace emu::instruction_set {
 
 void op0nnn(ChipState& /* not used */, const std::uint16_t /* not used */) {}
@@ -180,18 +178,16 @@ void opDxyn(ChipState& state, const std::uint16_t bytecode) {
 
 void opEx9E(ChipState& state, const std::uint16_t bytecode) {
     const auto kNibbleX = getNibbleX(bytecode);
-    const auto* current_kb_state = SDL_GetKeyboardState(NULL);
 
-    if (current_kb_state[keyMap(kNibbleX)]) {
+    if (state.keyboard[keyMap(kNibbleX)]) {
         state.program_counter += 2U;
     }
 }
 
 void opExA1(ChipState& state, const std::uint16_t bytecode) {
     const auto kNibbleX = getNibbleX(bytecode);
-    const auto* current_kb_state = SDL_GetKeyboardState(NULL);
 
-    if (!current_kb_state[keyMap(kNibbleX)]) {
+    if (!state.keyboard[keyMap(kNibbleX)]) {
         state.program_counter += 2U;
     }
 }
