@@ -142,17 +142,25 @@ void opCxkk(ChipState& state, const std::uint16_t bytecode) {
     state.V[getNibbleX(bytecode)] = state.rnd() & getAddress(bytecode);
 }
 
-void opDxyn(ChipState& state, const std::uint16_t bytecode) {}
+void opDxyn(ChipState& state, const std::uint16_t bytecode) {
+    // TODO
+}
 
-void opEx9E(ChipState& state, const std::uint16_t bytecode) {}
+void opEx9E(ChipState& state, const std::uint16_t bytecode) {
+    // TODO
+}
 
-void opExA1(ChipState& state, const std::uint16_t bytecode) {}
+void opExA1(ChipState& state, const std::uint16_t bytecode) {
+    // TODO
+}
 
 void opFx07(ChipState& state, const std::uint16_t bytecode) {
     state.V[getNibbleX(bytecode)] = state.delay_timer;
 }
 
-void opFx0A(ChipState& state, const std::uint16_t bytecode) {}
+void opFx0A(ChipState& state, const std::uint16_t bytecode) {
+    // TODO
+}
 
 void opFx15(ChipState& state, const std::uint16_t bytecode) {
     state.delay_timer = state.V[getNibbleX(bytecode)];
