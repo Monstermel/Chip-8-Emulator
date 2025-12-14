@@ -1,5 +1,5 @@
-#ifndef CHIP_8_INTRUCTIONS_HPP
-#define CHIP_8_INTRUCTIONS_HPP
+#ifndef CHIP_8_INSTRUCTION_SET_HPP
+#define CHIP_8_INSTRUCTION_SET_HPP
 
 #include <cstdint>
 
@@ -124,7 +124,8 @@ void op8xy5(ChipState& state, const std::uint16_t bytecode);
 
 /**
  * @brief SHR Vx {, Vy} - Set Vx = Vx SHR 1.
- * @todo Then why y is there?
+ * @note CHIP-48 and SUPER-CHIP behavior. Ignore Vy and shift Vx in place.
+ * @todo Add option to recreate COSMAC VIP. Store Vy into Vx first.
  * @param bytecode
  */
 void op8xy6(ChipState& state, const std::uint16_t bytecode);
@@ -138,7 +139,8 @@ void op8xy7(ChipState& state, const std::uint16_t bytecode);
 
 /**
  * @brief SHL Vx {, Vy} - Set Vx = Vx SHL 1.
- * @todo Then why y is there?
+ * @note CHIP-48 and SUPER-CHIP behavior. Ignore Vy and shift Vx in place.
+ * @todo Add option to recreate COSMAC VIP. Store Vy into Vx first.
  * @param bytecode
  */
 void op8xyE(ChipState& state, const std::uint16_t bytecode);
@@ -159,7 +161,8 @@ void opAnnn(ChipState& state, const std::uint16_t bytecode);
 
 /**
  * @brief JP V0, addr - Jump to location nnn + V0.
- *
+ * @note COSMAC VIP behavior. Use V0 instead of Vx.
+ * @todo Add option to recreate CHIP-48 and SUPER-CHIP. Use Vx instead of V0.
  * @param bytecode
  */
 void opBnnn(ChipState& state, const std::uint16_t bytecode);
@@ -248,7 +251,8 @@ void opFx33(ChipState& state, const std::uint16_t bytecode);
 /**
  * @brief LD [I], Vx - Store registers V0 through Vx in memory starting at
  * location I.
- *
+ * @note CHIP-48 and SUPER-CHIP behavior. Don't update I after each store.
+ * @todo Add option to recreate COSMAC VIP. Update I after each store.
  * @param bytecode
  */
 void opFx55(ChipState& state, const std::uint16_t bytecode);
@@ -256,11 +260,12 @@ void opFx55(ChipState& state, const std::uint16_t bytecode);
 /**
  * @brief Fx65 - LD Vx, [I] - Read registers V0 through Vx from memory
  * starting at location I.
- *
+ * @note CHIP-48 and SUPER-CHIP behavior. Don't update [I] after each load.
+ * @todo Add option to recreate COSMAC VIP. Update [I] after each load.
  * @param bytecode
  */
 void opFx65(ChipState& state, const std::uint16_t bytecode);
 
 };  // namespace emu::instruction_set
 
-#endif /* CHIP_8_INTRUCTIONS_HPP */
+#endif /* CHIP_8_INSTRUCTION_SET_HPP */

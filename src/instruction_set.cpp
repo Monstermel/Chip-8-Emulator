@@ -89,30 +89,44 @@ void op8xy5(ChipState& state, const std::uint16_t bytecode) {
     const auto kNibbleY = getNibbleY(bytecode);
 
     // TODO: Remove branch
-    state.V[0xF] = (state.V[kNibbleX] > state.V[kNibbleY]) ? 1 : 0;
+    state.V[0xF] = (state.V[kNibbleX] > state.V[kNibbleY]) ? 0x01U : 0x00U;
 
     state.V[kNibbleX] =
         static_cast<std::uint8_t>(state.V[kNibbleX] - state.V[kNibbleY]);
 }
 
-void op8xy6(ChipState& state, const std::uint16_t bytecode) {}
+void op8xy6(ChipState& state, const std::uint16_t bytecode) {
+    const auto kNibbleX = getNibbleX(bytecode);
+
+    const auto kTemp = static_cast<unsigned int>(state.V[kNibbleX]);
+
+    state.V[0xF] = static_cast<std::uint8_t>(kTemp & 0x1U);
+    state.V[kNibbleX] >>= 1U;
+}
 
 void op8xy7(ChipState& state, const std::uint16_t bytecode) {
     const auto kNibbleX = getNibbleX(bytecode);
     const auto kNibbleY = getNibbleY(bytecode);
 
     // TODO: Remove branch
-    state.V[0xF] = (state.V[kNibbleY] > state.V[kNibbleX]) ? 1 : 0;
+    state.V[0xF] = (state.V[kNibbleY] > state.V[kNibbleX]) ? 0x01U : 0x00U;
 
     state.V[kNibbleX] =
         static_cast<std::uint8_t>(state.V[kNibbleY] - state.V[kNibbleX]);
 }
 
-void op8xyE(ChipState& state, const std::uint16_t bytecode) {}
+void op8xyE(ChipState& state, const std::uint16_t bytecode) {
+    const auto kNibbleX = getNibbleX(bytecode);
+
+    const auto kResult = static_cast<unsigned int>(state.V[kNibbleX]) << 1U;
+
+    state.V[0xF] = static_cast<std::uint8_t>((kResult & 0x100U) >> kByteWidth);
+    state.V[kNibbleX] = static_cast<std::uint8_t>(kResult);
+}
 
 void op9xy0(ChipState& state, const std::uint16_t bytecode) {
     if (state.V[getNibbleX(bytecode)] != state.V[getNibbleY(bytecode)]) {
-        state.program_counter += 2;
+        state.program_counter += 2U;
     }
 }
 
@@ -164,11 +178,11 @@ void opFx33(ChipState& state, const std::uint16_t bytecode) {
 
     state.memory[state.index_register + 2] =
         static_cast<std::uint8_t>(value % 10U);
-    value /= 10;
+    value /= 10U;
 
     state.memory[state.index_register + 1] =
         static_cast<std::uint8_t>(value % 10U);
-    value /= 10;
+    value /= 10U;
 
     state.memory[state.index_register] = static_cast<std::uint8_t>(value % 10U);
 }
