@@ -1,6 +1,8 @@
 #include "chip_8/instruction_set.hpp"
 
+#include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 #include "chip_8/error.hpp"
 #include "chip_8/utility.hpp"
@@ -9,8 +11,8 @@ namespace emu::instruction_set {
 
 void op0nnn(ChipState& /* not used */, const std::uint16_t /* not used */) {}
 
-void op00E0(ChipState& state, const std::uint16_t bytecode) {
-    // TODO
+void op00E0(ChipState& state, const std::uint16_t /* not used */) {
+    std::memset(state.display.data(), 0x00, state.display.size());
 }
 
 void op00EE(ChipState& state, const std::uint16_t /* not used */) {
@@ -143,7 +145,38 @@ void opCxkk(ChipState& state, const std::uint16_t bytecode) {
 }
 
 void opDxyn(ChipState& state, const std::uint16_t bytecode) {
-    // TODO
+    const auto kNibbleX =
+        static_cast<std::size_t>(getNibbleX(bytecode)) % display::kWidth;
+    const auto kNibbleY =
+        static_cast<std::size_t>(getNibbleY(bytecode)) % display::kHeight;
+
+    const auto kNibbleN = static_cast<std::size_t>(getNibbleN(bytecode));
+
+    state.V[0xF] = 0U;
+    for (std::size_t j = 0; j < kNibbleN; j++) {
+        if ((kNibbleY + j) == display::kHeight) {
+            break;
+        }
+
+        const auto kSprite =
+            static_cast<unsigned int>(state.memory[state.index_register + j]);
+        for (std::size_t i = 0; i < kByteWidth; i++) {
+            if ((kNibbleX + i) == display::kWidth) {
+                break;
+            }
+
+            auto& old_pixel = state.display[(kNibbleX + i) +
+                                            ((kNibbleY + j) * display::kWidth)];
+            const auto kNewPixel =
+                (kSprite >> (kByteWidth - (i + 1U))) ^ old_pixel;
+
+            if (old_pixel == 1U && kNewPixel == 0U) {
+                state.V[0xF] = 1U;
+            }
+
+            old_pixel = static_cast<std::uint8_t>(kNewPixel);
+        }
+    }
 }
 
 void opEx9E(ChipState& state, const std::uint16_t bytecode) {

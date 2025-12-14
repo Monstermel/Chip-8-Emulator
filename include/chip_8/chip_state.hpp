@@ -8,6 +8,11 @@
 
 namespace emu {
 
+namespace display {                  // Registers metadata
+constexpr std::size_t kWidth = 64;   // X
+constexpr std::size_t kHeight = 32;  // Y
+}  // namespace display
+
 namespace font {  // Font metadata
 constexpr std::uint16_t kSpriteSize = 5;
 constexpr std::uint16_t kMemoryOffset = 0x000;
@@ -43,6 +48,8 @@ struct ChipState {
         0xF0, 0x80, 0xF0, 0x80, 0xF0,  // E
         0xF0, 0x80, 0xF0, 0x80, 0x80   // F
     };
+    // Display buffer
+    std::array<std::uint8_t, display::kWidth * display::kHeight> display{};
     // Registers
     std::array<std::uint8_t, registers::kNum> V{};
     // Random engine

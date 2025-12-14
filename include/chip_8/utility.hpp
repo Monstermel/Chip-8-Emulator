@@ -11,6 +11,8 @@ constexpr unsigned int kNibbleXMask = 0x0F00U;
 
 constexpr unsigned int kNibbleYMask = 0x00F0U;
 
+constexpr unsigned int kNibbleNMask = 0x000FU;
+
 constexpr unsigned int kLowByteMask = 0x00FFU;
 
 constexpr unsigned int kAddressMask = 0x0FFFU;
@@ -33,6 +35,16 @@ inline std::uint8_t getNibbleX(const std::uint16_t bytecode) {
  */
 inline std::uint8_t getNibbleY(const std::uint16_t bytecode) {
     return (bytecode & kNibbleYMask) >> (kByteWidth >> 1U);
+}
+
+/**
+ * @brief Get the N nibble from bytecode
+ *
+ * @param bytecode
+ * @return std::uint8_t
+ */
+inline std::uint8_t getNibbleN(const std::uint16_t bytecode) {
+    return (bytecode & kNibbleNMask);
 }
 
 /**
