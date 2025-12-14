@@ -5,7 +5,10 @@
 #include <cstring>
 
 #include "chip_8/error.hpp"
+#include "chip_8/key_map.hpp"
 #include "chip_8/utility.hpp"
+
+#include "SDL3/SDL_keyboard.h"
 
 namespace emu::instruction_set {
 
@@ -170,17 +173,27 @@ void opDxyn(ChipState& state, const std::uint16_t bytecode) {
             const auto kNewPixel = (kSprite >> (kByteWidth - (i + 1U))) & 0x1U;
 
             state.V[0xF] |= static_cast<std::uint8_t>(kNewPixel & old_pixel);
-            old_pixel = static_cast<std::uint8_t>(kNewPixel ^ old_pixel);
+            old_pixel ^= static_cast<std::uint8_t>(kNewPixel);
         }
     }
 }
 
 void opEx9E(ChipState& state, const std::uint16_t bytecode) {
-    // TODO
+    const auto kNibbleX = getNibbleX(bytecode);
+    const auto* current_kb_state = SDL_GetKeyboardState(NULL);
+
+    if (current_kb_state[keyMap(kNibbleX)]) {
+        state.program_counter += 2U;
+    }
 }
 
 void opExA1(ChipState& state, const std::uint16_t bytecode) {
-    // TODO
+    const auto kNibbleX = getNibbleX(bytecode);
+    const auto* current_kb_state = SDL_GetKeyboardState(NULL);
+
+    if (!current_kb_state[keyMap(kNibbleX)]) {
+        state.program_counter += 2U;
+    }
 }
 
 void opFx07(ChipState& state, const std::uint16_t bytecode) {

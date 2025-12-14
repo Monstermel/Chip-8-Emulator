@@ -2,6 +2,7 @@
 
 #define SDL_MAIN_USE_CALLBACKS 1
 #include "SDL3/SDL.h"
+#include "SDL3/SDL_events.h"
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_main.h"
 
@@ -26,6 +27,10 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
 
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void* appstate) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {  // poll until all events are handled!
+    }
+
     try {
         g_interpreter.cycle();
     } catch (...) {

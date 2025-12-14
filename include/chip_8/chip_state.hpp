@@ -1,16 +1,19 @@
-#ifndef CHIP_8_CHIP_8_STATE_HPP
-#define CHIP_8_CHIP_8_STATE_HPP
+#ifndef CHIP_8_CHIP_STATE_HPP
+#define CHIP_8_CHIP_STATE_HPP
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <random>
 #include <stack>
 
 namespace emu {
 
-namespace display {                  // Registers metadata
-constexpr std::size_t kWidth = 64;   // X
-constexpr std::size_t kHeight = 32;  // Y
+namespace display {  // Registers metadata
+// X axis
+constexpr std::size_t kWidth = 64;
+// Y axis
+constexpr std::size_t kHeight = 32;
 }  // namespace display
 
 namespace font {  // Font metadata
@@ -69,4 +72,4 @@ struct ChipState {
 
 }  // namespace emu
 
-#endif /* CHIP_8_CHIP_8_STATE_HPP */
+#endif /* CHIP_8_CHIP_STATE_HPP */
