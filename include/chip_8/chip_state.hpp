@@ -1,39 +1,25 @@
 #ifndef CHIP_8_CHIP_STATE_HPP
 #define CHIP_8_CHIP_STATE_HPP
 
-#include <array>
-#include <cstddef>
 #include <cstdint>
 #include <random>
 #include <stack>
 
-namespace emu {
+#include "chip_8/display.hpp"
+#include "chip_8/keyboard.hpp"
+#include "chip_8/memory.hpp"
+#include "chip_8/registers.hpp"
 
-namespace display {  // Registers metadata
-// X axis
-constexpr std::size_t kWidth = 64;
-// Y axis
-constexpr std::size_t kHeight = 32;
-}  // namespace display
+namespace emu {
 
 namespace font {  // Font metadata
 constexpr std::uint16_t kSpriteSize = 5;
 constexpr std::uint16_t kMemoryOffset = 0x000;
 }  // namespace font
 
-namespace memory {  // Memory layout
-constexpr std::uint16_t kInterpreterSpaceOffset = 0x000;
-constexpr std::uint16_t kProgramSpaceOffset = 0x200;
-constexpr std::size_t kSize = 4096;
-}  // namespace memory
-
-namespace registers {  // Registers metadata
-constexpr std::size_t kNum = 16;
-}
-
 struct ChipState {
     // Memory
-    std::array<std::uint8_t, memory::kSize> memory{
+    memory::Type memory{
         0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
         0x20, 0x60, 0x20, 0x20, 0x70,  // 1
         0xF0, 0x10, 0xF0, 0x80, 0xF0,  // 2
@@ -52,9 +38,9 @@ struct ChipState {
         0xF0, 0x80, 0xF0, 0x80, 0x80   // F
     };
     // Display buffer
-    std::array<std::uint8_t, display::kWidth * display::kHeight> display{};
+    display::Type display{};
     // Registers
-    std::array<std::uint8_t, registers::kNum> V{};
+    registers::Type V{};
     // Random engine
     std::minstd_rand rnd;
     // Program counter
@@ -67,7 +53,7 @@ struct ChipState {
     std::uint8_t sound_timer{};
 
     // Keyboard state
-    const bool* keyboard{};
+    keyboard::Type keyboard{};
 
     // Stack TODO: Implement a static stack
     std::stack<std::uint16_t> stack;

@@ -4,9 +4,11 @@
 #include <cstdint>
 #include <cstring>
 
+#include "chip_8/display.hpp"
 #include "chip_8/error.hpp"
-#include "chip_8/keys.hpp"
+#include "chip_8/keyboard.hpp"
 #include "chip_8/utility.hpp"
+
 
 namespace emu::instruction_set {
 
@@ -179,7 +181,7 @@ void opDxyn(ChipState& state, const std::uint16_t bytecode) {
 void opEx9E(ChipState& state, const std::uint16_t bytecode) {
     const auto kNibbleX = getNibbleX(bytecode);
 
-    if (state.keyboard[keys::mapping(kNibbleX)]) {
+    if (state.keyboard[keyboard::mapping(kNibbleX)]) {
         state.program_counter += 2U;
     }
 }
@@ -187,7 +189,7 @@ void opEx9E(ChipState& state, const std::uint16_t bytecode) {
 void opExA1(ChipState& state, const std::uint16_t bytecode) {
     const auto kNibbleX = getNibbleX(bytecode);
 
-    if (!state.keyboard[keys::mapping(kNibbleX)]) {
+    if (!state.keyboard[keyboard::mapping(kNibbleX)]) {
         state.program_counter += 2U;
     }
 }
@@ -198,8 +200,8 @@ void opFx07(ChipState& state, const std::uint16_t bytecode) {
 
 void opFx0A(ChipState& state, const std::uint16_t bytecode) {
     int key_pressed = -1;
-    for (auto i = 0; i < keys::kNum; i++) {
-        if (state.keyboard[keys::mapping(i)]) {
+    for (auto i = 0; i < keyboard::kNumKeys; i++) {
+        if (state.keyboard[keyboard::mapping(i)]) {
             key_pressed = i;
             break;
         }

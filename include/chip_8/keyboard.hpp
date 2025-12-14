@@ -6,9 +6,9 @@
 
 #include "SDL3/SDL_scancode.h"
 
-namespace emu::keys {
+namespace emu::keyboard {
 
-constexpr unsigned int kNum = 16;
+constexpr unsigned int kNumKeys = 16;
 
 inline std::size_t mapping(const std::uint8_t key) {
     switch (key) {
@@ -54,6 +54,8 @@ inline std::size_t mapping(const std::uint8_t key) {
     }
 }
 
-};  // namespace emu::keys
+using Type = const bool*;
+
+};  // namespace emu::keyboard
 
 #endif /* CHIP_8_KEY_MAP_HPP */
