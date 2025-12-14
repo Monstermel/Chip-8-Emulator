@@ -167,9 +167,9 @@ void opDxyn(ChipState& state, const std::uint16_t bytecode) {
 
             auto& old_pixel = state.display[(kNibbleX + i) +
                                             ((kNibbleY + j) * display::kWidth)];
-            const auto kNewPixel = (kSprite >> (kByteWidth - (i + 1U)));
+            const auto kNewPixel = (kSprite >> (kByteWidth - (i + 1U))) & 0x1U;
 
-            state.V[0xF] = static_cast<std::uint8_t>(kNewPixel & old_pixel);
+            state.V[0xF] |= static_cast<std::uint8_t>(kNewPixel & old_pixel);
             old_pixel = static_cast<std::uint8_t>(kNewPixel ^ old_pixel);
         }
     }
