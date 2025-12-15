@@ -4,16 +4,23 @@
 #include <cstdint>
 
 #include "chip_8/chip_state.hpp"
+#include "chip_8/display.hpp"
 #include "chip_8/error.hpp"
 #include "chip_8/instruction_set.hpp"
 #include "chip_8/utility.hpp"
 
 #include "SDL3/SDL_keyboard.h"
+#include "SDL3/SDL_log.h"
+#include "SDL3/SDL_render.h"
+#include "SDL3/SDL_video.h"
 
 namespace emu {
 
 class Chip8 {
     ChipState state_;
+    // Move this a frontend class
+    SDL_Window* window_{};
+    SDL_Renderer* renderer_{};
 
     /**
      * @brief Fetch an instruction from memory and update program counter
@@ -177,6 +184,27 @@ class Chip8 {
         }
     }
 
+    void renderDisplay() {
+        // Clear screen to black
+        SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
+        SDL_RenderClear(renderer_);
+
+        // Set drawing color to white (CHIP-8 foreground)
+        SDL_SetRenderDrawColor(renderer_, 255, 255, 255, 255);
+
+        // Draw pixels
+        for (int y = 0; y < display::kHeight; y++) {
+            for (int x = 0; x < display::kWidth; x++) {
+                if (state_.display[x + (y * display::kWidth)]) {
+                    SDL_RenderPoint(renderer_, x, y);
+                }
+            }
+        }
+
+        // Update screen
+        SDL_RenderPresent(renderer_);
+    }
+
    public:
     /**
      * @brief Load test ROM into memory
@@ -184,6 +212,24 @@ class Chip8 {
      * @return 0 at success, -1 at failure
      */
     int load();
+
+    bool init() {
+        if (!SDL_CreateWindowAndRenderer(
+                "Chip-8", display::kWidth * 10, display::kHeight * 10,
+                SDL_WINDOW_RESIZABLE, &window_, &renderer_)) {
+            return false;
+        }
+        if (!SDL_SetRenderScale(renderer_, 10.0F, 10.0F)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    void shutdown() {
+        SDL_DestroyRenderer(renderer_);
+        SDL_DestroyWindow(window_);
+    }
 
     /**
      * @brief Represet a single interpreter cycle
@@ -206,6 +252,8 @@ class Chip8 {
             // Make a beep
             state_.sound_timer -= 1;
         }
+
+        renderDisplay();
     }
 };
 

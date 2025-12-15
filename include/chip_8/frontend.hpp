@@ -1,0 +1,5 @@
+#ifndef CHIP_8_FRONTEND_HPP
+#define CHIP_8_FRONTEND_HPP
+
+
+#endif /* CHIP_8_FRONTEND_HPP */

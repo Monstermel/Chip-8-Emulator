@@ -9,6 +9,7 @@
 #include "chip_8/keyboard.hpp"
 #include "chip_8/utility.hpp"
 
+#include "SDL3/SDL_log.h"
 
 namespace emu::instruction_set {
 
@@ -148,28 +149,30 @@ void opCxkk(ChipState& state, const std::uint16_t bytecode) {
 }
 
 void opDxyn(ChipState& state, const std::uint16_t bytecode) {
-    const auto kNibbleX =
-        static_cast<std::size_t>(getNibbleX(bytecode)) % display::kWidth;
-    const auto kNibbleY =
-        static_cast<std::size_t>(getNibbleY(bytecode)) % display::kHeight;
+    const auto kCordX =
+        static_cast<std::size_t>(state.V[getNibbleX(bytecode)]) %
+        display::kWidth;
+    const auto kCordY =
+        static_cast<std::size_t>(state.V[getNibbleY(bytecode)]) %
+        display::kHeight;
 
     const auto kNibbleN = static_cast<std::size_t>(getNibbleN(bytecode));
 
     state.V[0xF] = 0U;
     for (std::size_t j = 0; j < kNibbleN; j++) {
-        if ((kNibbleY + j) == display::kHeight) {
+        if ((kCordY + j) == display::kHeight) {
             break;
         }
 
         const auto kSprite =
             static_cast<unsigned int>(state.memory[state.index_register + j]);
         for (std::size_t i = 0; i < kByteWidth; i++) {
-            if ((kNibbleX + i) == display::kWidth) {
+            if ((kCordX + i) == display::kWidth) {
                 break;
             }
 
-            auto& old_pixel = state.display[(kNibbleX + i) +
-                                            ((kNibbleY + j) * display::kWidth)];
+            auto& old_pixel =
+                state.display[(kCordX + i) + ((kCordY + j) * display::kWidth)];
             const auto kNewPixel = (kSprite >> (kByteWidth - (i + 1U))) & 0x1U;
 
             state.V[0xF] |= static_cast<std::uint8_t>(kNewPixel & old_pixel);
