@@ -1,7 +1,10 @@
 #ifndef CHIP_8_ERROR_HANDLING_HPP
 #define CHIP_8_ERROR_HANDLING_HPP
 
+#include <cstdint>
+#include <format>
 #include <stdexcept>
+#include <string>
 
 namespace emu {
 
@@ -9,6 +12,9 @@ class InvalidInstructionError : public std::runtime_error {
    public:
     explicit InvalidInstructionError()
         : std::runtime_error("Invalid instruction") {};
+    explicit InvalidInstructionError(const std::uint16_t bytecode)
+        : std::runtime_error(
+              std::format("Invalid instruction: 0x{:04X}", bytecode)) {};
     explicit InvalidInstructionError(const std::string& message)
         : std::runtime_error(message) {}
 };

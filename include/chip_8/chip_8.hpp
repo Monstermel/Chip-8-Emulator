@@ -1,7 +1,9 @@
 #ifndef CHIP_8_CHIP_8_HPP
 #define CHIP_8_CHIP_8_HPP
 
+#include <chrono>
 #include <cstdint>
+#include <thread>
 
 #include "chip_8/chip_state.hpp"
 #include "chip_8/display.hpp"
@@ -85,7 +87,7 @@ class Chip8 {
             case 0x000E:
                 return instruction_set::op8xyE;
             default:
-                throw InvalidInstructionError();
+                throw InvalidInstructionError(bytecode);
         }
     }
 
@@ -103,7 +105,7 @@ class Chip8 {
             case 0x00A1:
                 return instruction_set::opExA1;
             default:
-                throw InvalidInstructionError();
+                throw InvalidInstructionError(bytecode);
         }
     }
 
@@ -135,7 +137,7 @@ class Chip8 {
             case 0x0065:
                 return instruction_set::opFx65;
             default:
-                throw InvalidInstructionError();
+                throw InvalidInstructionError(bytecode);
         }
     }
 
@@ -180,7 +182,7 @@ class Chip8 {
             case 0xF000:
                 return handleGroupF(bytecode);
             default:
-                throw InvalidInstructionError();
+                throw InvalidInstructionError(bytecode);
         }
     }
 
@@ -236,6 +238,8 @@ class Chip8 {
      *
      */
     void cycle() {
+        const auto kStart = std::chrono::system_clock::now();
+
         state_.keyboard = SDL_GetKeyboardState(NULL);
 
         const auto kBytecode = fetch();
@@ -254,6 +258,16 @@ class Chip8 {
         }
 
         renderDisplay();
+
+        const auto kFinish = std::chrono::system_clock::now();
+
+        using namespace std::chrono_literals;
+
+        constexpr auto kTargetTime = 1.43ms;
+        const auto kTotalTime = kFinish - kStart;
+        if (kTotalTime < kTargetTime) {
+            std::this_thread::sleep_for(kTargetTime - kTotalTime);
+        }
     }
 };
 
