@@ -11,7 +11,12 @@ constexpr std::size_t kWidth = 64;
 // Y axis
 constexpr std::size_t kHeight = 32;
 
-using Type = std::array<std::uint8_t, kWidth * kHeight>;
+struct Display {
+    std::array<std::uint8_t, kWidth * kHeight> buffer{};
+    bool draw{};
+};
+
+using Type = Display;
 
 }  // namespace emu::display
 

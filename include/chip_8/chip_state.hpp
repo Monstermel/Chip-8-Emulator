@@ -38,7 +38,7 @@ struct ChipState {
         0xF0, 0x80, 0xF0, 0x80, 0x80   // F
     };
     // Display buffer
-    display::Type display{};
+    display::Type display;
     // Registers
     registers::Type V{};
     // Random engine

@@ -10,7 +10,7 @@ namespace emu {
 
 int Chip8::load() {
     // Open test ROM
-    std::ifstream file("test/snake.ch8",
+    std::ifstream file("roms/snake.ch8",
                        // NOLINTNEXTLINE (hicpp-signed-bitwise)
                        std::ifstream::ate | std::ifstream::binary);
     if (!file.is_open()) {

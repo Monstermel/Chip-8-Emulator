@@ -9,14 +9,13 @@
 #include "chip_8/keyboard.hpp"
 #include "chip_8/utility.hpp"
 
-#include "SDL3/SDL_log.h"
-
 namespace emu::instruction_set {
 
 void op0nnn(ChipState& /* not used */, const std::uint16_t /* not used */) {}
 
 void op00E0(ChipState& state, const std::uint16_t /* not used */) {
-    std::memset(state.display.data(), 0x00, state.display.size());
+    std::memset(state.display.buffer.data(), 0x00, state.display.buffer.size());
+    state.display.draw = true;
 }
 
 void op00EE(ChipState& state, const std::uint16_t /* not used */) {
@@ -92,13 +91,13 @@ void op8xy4(ChipState& state, const std::uint16_t bytecode) {
 
 void op8xy5(ChipState& state, const std::uint16_t bytecode) {
     const auto kNibbleX = getNibbleX(bytecode);
-    const auto kNibbleY = getNibbleY(bytecode);
 
-    // TODO: Remove branch
-    state.V[0xF] = (state.V[kNibbleX] > state.V[kNibbleY]) ? 0x01U : 0x00U;
+    const auto kResult =
+        static_cast<unsigned int>(state.V[kNibbleX]) -
+        static_cast<unsigned int>(state.V[getNibbleY(bytecode)]);
 
-    state.V[kNibbleX] =
-        static_cast<std::uint8_t>(state.V[kNibbleX] - state.V[kNibbleY]);
+    state.V[0xF] = static_cast<std::uint8_t>((~kResult & 0x100U) >> kByteWidth);
+    state.V[kNibbleX] = static_cast<std::uint8_t>(kResult);
 }
 
 void op8xy6(ChipState& state, const std::uint16_t bytecode) {
@@ -112,13 +111,13 @@ void op8xy6(ChipState& state, const std::uint16_t bytecode) {
 
 void op8xy7(ChipState& state, const std::uint16_t bytecode) {
     const auto kNibbleX = getNibbleX(bytecode);
-    const auto kNibbleY = getNibbleY(bytecode);
 
-    // TODO: Remove branch
-    state.V[0xF] = (state.V[kNibbleY] > state.V[kNibbleX]) ? 0x01U : 0x00U;
+    const auto kResult =
+        static_cast<unsigned int>(state.V[getNibbleY(bytecode)]) -
+        static_cast<unsigned int>(state.V[kNibbleX]);
 
-    state.V[kNibbleX] =
-        static_cast<std::uint8_t>(state.V[kNibbleY] - state.V[kNibbleX]);
+    state.V[0xF] = static_cast<std::uint8_t>((~kResult & 0x100U) >> kByteWidth);
+    state.V[kNibbleX] = static_cast<std::uint8_t>(kResult);
 }
 
 void op8xyE(ChipState& state, const std::uint16_t bytecode) {
@@ -145,7 +144,8 @@ void opBnnn(ChipState& state, const std::uint16_t bytecode) {
 }
 
 void opCxkk(ChipState& state, const std::uint16_t bytecode) {
-    state.V[getNibbleX(bytecode)] = state.rnd() & getAddress(bytecode);
+    state.V[getNibbleX(bytecode)] =
+        static_cast<std::uint8_t>(state.rnd() & getAddress(bytecode));
 }
 
 void opDxyn(ChipState& state, const std::uint16_t bytecode) {
@@ -172,27 +172,38 @@ void opDxyn(ChipState& state, const std::uint16_t bytecode) {
             }
 
             auto& old_pixel =
-                state.display[(kCordX + i) + ((kCordY + j) * display::kWidth)];
+                state.display
+                    .buffer[(kCordX + i) + ((kCordY + j) * display::kWidth)];
             const auto kNewPixel = (kSprite >> (kByteWidth - (i + 1U))) & 0x1U;
 
             state.V[0xF] |= static_cast<std::uint8_t>(kNewPixel & old_pixel);
             old_pixel ^= static_cast<std::uint8_t>(kNewPixel);
         }
     }
+
+    state.display.draw = true;
 }
 
 void opEx9E(ChipState& state, const std::uint16_t bytecode) {
-    const auto kNibbleX = getNibbleX(bytecode);
+    if (state.keyboard == nullptr) {
+        return;
+    }
 
-    if (state.keyboard[keyboard::mapping(kNibbleX)]) {
+    const auto kKey = state.V[getNibbleX(bytecode)];
+
+    if (state.keyboard[keyboard::mapping(kKey)]) {
         state.program_counter += 2U;
     }
 }
 
 void opExA1(ChipState& state, const std::uint16_t bytecode) {
-    const auto kNibbleX = getNibbleX(bytecode);
+    if (state.keyboard == nullptr) {
+        return;
+    }
 
-    if (!state.keyboard[keyboard::mapping(kNibbleX)]) {
+    const auto kKey = state.V[getNibbleX(bytecode)];
+
+    if (!state.keyboard[keyboard::mapping(kKey)]) {
         state.program_counter += 2U;
     }
 }
@@ -202,10 +213,17 @@ void opFx07(ChipState& state, const std::uint16_t bytecode) {
 }
 
 void opFx0A(ChipState& state, const std::uint16_t bytecode) {
+    if (state.keyboard == nullptr) {
+        // REVIEW: Should we throw an error here? If this is called with a null
+        // keyboard for sure an error happened
+        return;
+    }
+
     int key_pressed = -1;
-    for (auto i = 0; i < keyboard::kNumKeys; i++) {
-        if (state.keyboard[keyboard::mapping(i)]) {
-            key_pressed = i;
+    for (std::uint8_t key = 0;
+         key < static_cast<std::uint8_t>(keyboard::kNumKeys); key++) {
+        if (state.keyboard[keyboard::mapping(key)]) {
+            key_pressed = key;
             break;
         }
     }

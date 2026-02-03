@@ -2,6 +2,7 @@
 #define CHIP_8_CHIP_8_HPP
 
 #include <chrono>
+#include <cstddef>
 #include <cstdint>
 #include <thread>
 
@@ -38,7 +39,7 @@ class Chip8 {
 
         state_.program_counter += 2;
 
-        return kInstruction;
+        return static_cast<std::uint16_t>(kInstruction);
     }
 
     /**
@@ -195,16 +196,21 @@ class Chip8 {
         SDL_SetRenderDrawColor(renderer_, 255, 255, 255, 255);
 
         // Draw pixels
-        for (int y = 0; y < display::kHeight; y++) {
-            for (int x = 0; x < display::kWidth; x++) {
-                if (state_.display[x + (y * display::kWidth)]) {
-                    SDL_RenderPoint(renderer_, x, y);
+        for (std::size_t y = 0; y < display::kHeight; y++) {
+            for (std::size_t x = 0; x < display::kWidth; x++) {
+                if (state_.display.buffer[x + (y * display::kWidth)] != 0U) {
+                    // REVIEW: How expensive are these casts?
+                    SDL_RenderPoint(renderer_, static_cast<float>(x),
+                                    static_cast<float>(y));
                 }
             }
         }
 
         // Update screen
         SDL_RenderPresent(renderer_);
+
+        // Reset draw flag
+        state_.display.draw = false;
     }
 
    public:
@@ -257,7 +263,9 @@ class Chip8 {
             state_.sound_timer -= 1;
         }
 
-        renderDisplay();
+        if (state_.display.draw) {
+            renderDisplay();
+        }
 
         const auto kFinish = std::chrono::system_clock::now();
 

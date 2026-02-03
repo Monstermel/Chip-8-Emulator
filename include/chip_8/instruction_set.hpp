@@ -258,8 +258,7 @@ void opFx33(ChipState& state, const std::uint16_t bytecode);
 void opFx55(ChipState& state, const std::uint16_t bytecode);
 
 /**
- * @brief Fx65 - LD Vx, [I] - Read registers V0 through Vx from memory
- * starting at location I.
+ * @brief Fx65 - LD Vx, [I] - Load memory starting at location I into registers V0 through Vx.
  * @note CHIP-48 and SUPER-CHIP behavior. Don't update [I] after each load.
  * @todo Add option to recreate COSMAC VIP. Update [I] after each load.
  * @param bytecode
