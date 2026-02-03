@@ -1,0 +1,20 @@
+// WARNING: Hardcoded paths. But it could be useful for anyone that wants to setup 
+// a visual studio developer shell directly on vs code. I hate visual studio, a lot
+//  of things I don't need, so yeah...
+{
+    "clangd.path": "c:\\Users\\abreu\\AppData\\Roaming\\Code\\User\\globalStorage\\llvm-vs-code-extensions.vscode-clangd\\install\\21.1.0\\clangd_21.1.0\\bin\\clangd.exe",
+    "clangd.arguments": [
+        "--query-driver=C:\\\"Program Files (x86)\"\\\"Microsoft Visual Studio\"\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx86\\x86\\cl.exe"
+    ],
+    "terminal.integrated.profiles.windows": {
+        "Visual Studio Developer PowerShell": {
+            "source": "PowerShell",
+            "args": [
+                "-noexit",
+                "C:\\\"Program Files (x86)\"\\\"Microsoft Visual Studio\"\\2022\\BuildTools\\Common7\\Tools\\Launch-VsDevShell.ps1"
+            ],
+            "overrideName": true
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "Visual Studio Developer PowerShell"
+}
