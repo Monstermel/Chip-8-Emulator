@@ -16,7 +16,6 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/include
 )
 
-
 target_link_libraries(${PROJECT_NAME}
     PRIVATE 
         gtest
