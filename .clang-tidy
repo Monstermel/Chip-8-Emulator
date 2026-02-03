@@ -1,9 +1,5 @@
 ---
 Checks: "*,
-        -cppcoreguidelines-pro-bounds-constant-array-index,
-        -hicpp-vararg,
-        -cppcoreguidelines-pro-type-vararg,
-        -misc-include-cleaner,
         -misc-use-anonymous-namespace,
         -modernize-use-trailing-return-type,
         -readability-avoid-const-params-in-decls,
@@ -27,8 +23,8 @@ Checks: "*,
 # .clang-tidy and .clang-format should always be in the same directory
 FormatStyle: .clang-format
 
-# Check headers
-HeaderFilterRegex: '.*'
+# Warnings as errors
+WarningsAsErrors: '*'
 
 # Custom version of https://google.github.io/styleguide/cppguide.html#Naming
 CheckOptions:
@@ -66,3 +62,6 @@ CheckOptions:
     - { key: readability-identifier-naming.EnumConstantPrefix,          value: k }
     # Macro Names
     - { key: readability-identifier-naming.MacroDefinitionCase,         value: UPPER_CASE }
+
+    # Actual checks options
+    - { key: readability-function-cognitive-complexity.IgnoreMacros,    value: true }
